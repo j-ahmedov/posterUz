@@ -17,7 +17,7 @@ class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
     post_image = models.ImageField(upload_to='post-images/%Y/%m/%d/')
-    published_at = models.DateTimeField()
+    published_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
@@ -34,7 +34,7 @@ class Comment(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     comment = models.TextField()
-    commented_at = models.DateTimeField()
+    commented_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Comment of post {self.post.id}"
