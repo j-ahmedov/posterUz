@@ -1,5 +1,33 @@
 from rest_framework import serializers
-from .models import Post
+from .models import Post, User
+
+
+class UserSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=50)
+    surname = serializers.CharField(max_length=50)
+    username = serializers.CharField(max_length=50)
+    password = serializers.CharField(max_length=50)
+    avatar = serializers.ImageField()
+
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.surname = validated_data.get("surname", instance.surname)
+        instance.username = validated_data.get("username", instance.username)
+        instance.password = validated_data.get("password", instance.password)
+        instance.avatar = validated_data.get("avatar", instance.avatar)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = User
+
+    def to_representation(self, obj):
+        rep = super(UserSerializer, self).to_representation(obj)
+        rep.pop('password', None)
+        return rep
 
 
 class PostSerializer(serializers.Serializer):
@@ -23,4 +51,3 @@ class PostSerializer(serializers.Serializer):
     class Meta:
         model = Post
         fields = ('user_id', 'title', 'content', 'post_image', 'published_at')
-
