@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/v1/post/list/', PostListAPI.as_view()),
     path('api/v1/post/create/', PostCreateAPI.as_view()),
     path('api/v1/post/detail/<int:pk>', PostDetailAPI.as_view()),
+    path('api/v1/post/update/<int:pk>', PostUpdateAPI.as_view()),
 
     # ---------------urls for User API------------------------------------
     path('api/v1/user/list/', UserListAPI.as_view()),

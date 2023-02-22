@@ -1,8 +1,9 @@
 from rest_framework import generics
 from .models import Post, User, Like, Comment, Follow
-from .serializers import PostSerializer, UserSerializer, LikeSerializer, CommentSerializer, FollowSerializer
+from .serializers import PostSerializer, PostCreateSerializer, UserSerializer, LikeSerializer, LikeCreateSerializer, \
+    CommentSerializer, CommentCreateSerializer, FollowSerializer, FollowCreateSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly, ObjectIsOwnerOrReadOnly
 
 
 #  --------------------UserAPIView----------------------------------------------
@@ -25,8 +26,8 @@ class UserDetailAPI(generics.RetrieveUpdateDestroyAPIView):
 # ------------------------PostAPIView--------------------------------------------
 class PostCreateAPI(generics.CreateAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsAuthenticated,)
+    serializer_class = PostCreateSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
 
 
 class PostListAPI(generics.ListAPIView):
@@ -35,16 +36,22 @@ class PostListAPI(generics.ListAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class PostDetailAPI(generics.RetrieveUpdateDestroyAPIView):
+class PostDetailAPI(generics.RetrieveDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (IsOwnerOrReadOnly,)
 
 
+class PostUpdateAPI(generics.UpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = (ObjectIsOwnerOrReadOnly,)
+
+
 # ------------------------LikeAPIView--------------------------------------------
 class LikeCreateAPI(generics.CreateAPIView):
     queryset = Like.objects.all()
-    serializer_class = LikeSerializer
+    serializer_class = LikeCreateSerializer
     permission_classes = (IsAuthenticated,)
 
 
@@ -63,7 +70,7 @@ class LikeDetailAPI(generics.RetrieveUpdateDestroyAPIView):
 # ------------------------CommentAPIView--------------------------------------------
 class CommentCreateAPI(generics.CreateAPIView):
     queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+    serializer_class = CommentCreateSerializer
     permission_classes = (IsAuthenticated,)
 
 
@@ -82,7 +89,7 @@ class CommentDetailAPI(generics.RetrieveUpdateDestroyAPIView):
 # ------------------------FollowAPIView--------------------------------------------
 class FollowCreateAPI(generics.CreateAPIView):
     queryset = Follow.objects.all()
-    serializer_class = FollowSerializer
+    serializer_class = FollowCreateSerializer
     permission_classes = (IsAuthenticated,)
 
 
