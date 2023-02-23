@@ -77,7 +77,7 @@ class CommentListAPI(generics.ListAPIView):
 class CommentDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (ObjectIsOwnerOrReadOnly,)
 
 
 # ------------------------FollowAPIView--------------------------------------------
