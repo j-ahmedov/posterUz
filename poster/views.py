@@ -36,13 +36,7 @@ class PostListAPI(generics.ListAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class PostDetailAPI(generics.RetrieveDestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
-
-
-class PostUpdateAPI(generics.UpdateAPIView):
+class PostDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (ObjectIsOwnerOrReadOnly,)
@@ -64,7 +58,7 @@ class LikeListAPI(generics.ListAPIView):
 class LikeDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Like.objects.all()
     serializer_class = LikeSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (ObjectIsOwnerOrReadOnly,)
 
 
 # ------------------------CommentAPIView--------------------------------------------
@@ -102,6 +96,6 @@ class FollowListAPI(generics.ListAPIView):
 class FollowDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (ObjectIsOwnerOrReadOnly,)
 
 

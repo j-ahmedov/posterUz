@@ -3,16 +3,16 @@ from .views import *
 
 
 urlpatterns = [
-    # --------------urls for Post API-----------------------------------
-    path('api/v1/post/list/', PostListAPI.as_view()),
-    path('api/v1/post/create/', PostCreateAPI.as_view()),
-    path('api/v1/post/detail/<int:pk>', PostDetailAPI.as_view()),
-    path('api/v1/post/update/<int:pk>', PostUpdateAPI.as_view()),
 
     # ---------------urls for User API------------------------------------
     path('api/v1/user/list/', UserListAPI.as_view()),
     path('api/v1/user/create/', UserCreateAPI.as_view()),
     path('api/v1/user/detail/<int:pk>', UserDetailAPI.as_view()),
+
+    # --------------urls for Post API-----------------------------------
+    path('api/v1/post/list/', PostListAPI.as_view()),
+    path('api/v1/post/create/', PostCreateAPI.as_view()),
+    path('api/v1/post/detail/<int:pk>', PostDetailAPI.as_view()),
 
     # ---------------urls for Like API------------------------------------
     path('api/v1/like/list/', LikeListAPI.as_view()),
