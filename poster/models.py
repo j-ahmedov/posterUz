@@ -14,7 +14,7 @@ class User(AbstractUser):
 
 
 class Post(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='user')
     title = models.CharField(max_length=100)
     content = models.TextField()
     post_image = models.ImageField(upload_to='post-images/%Y/%m/%d/')
@@ -33,7 +33,7 @@ class Like(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey('Post', on_delete=models.CASCADE)
+    post = models.ForeignKey('Post', related_name='comments', on_delete=models.CASCADE)
     user = models.ForeignKey('User', on_delete=models.CASCADE)
     comment = models.TextField()
     commented_at = models.DateTimeField(auto_now_add=True)

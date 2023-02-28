@@ -1,15 +1,25 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
 from .models import Post, User, Like, Comment, Follow
 
 
 # -----------------------User Serializers-----------------------------------------------------------
 
+# Main User serializer that represents all data except password
 class UserSerializer(serializers.ModelSerializer):
+
+    followers_count = serializers.SerializerMethodField(read_only=True)
+    followings_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_followers_count(self, user):
+        return Follow.objects.filter(following_user=user.id).count()
+
+    def get_followings_count(self, user):
+        return Follow.objects.filter(user=user).count()
+
     class Meta:
         model = User
-        fields = ('id', 'name', 'surname', 'username', 'password', 'avatar')
+        fields = ('id', 'name', 'surname', 'username', 'avatar', 'followers_count', 'followings_count')
 
     def create(self, validated_data):
         user = User(
@@ -22,19 +32,44 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-    def to_representation(self, obj):
-        rep = super(UserSerializer, self).to_representation(obj)
-        rep.pop('password', None)
-        return rep
+
+# Serializer to return User data in comments and posts
+class UserInShortSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'avatar')
+
+
+# -----------------------Comment Serializers-----------------------------------------------------------
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user = UserInShortSerializer()
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
 
 
 # ------------------------Post Serializers------------------------------------------------------------
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserInShortSerializer()
+
+    comments_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_comments_count(self, post):
+        return post.comments.count()
+
 
     class Meta:
         model = Post
@@ -67,27 +102,6 @@ class LikeCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Like
-        fields = "__all__"
-
-
-# -----------------------Comment Serializers-----------------------------------------------------------
-
-class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
-
-    class Meta:
-        model = Comment
-        fields = "__all__"
-
-
-class CommentCreateSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = Comment
         fields = "__all__"
 
 
