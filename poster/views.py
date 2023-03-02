@@ -1,7 +1,5 @@
 from rest_framework import generics
-from .models import Post, User, Like, Comment, Follow
-from .serializers import PostSerializer, PostCreateSerializer, UserSerializer, LikeSerializer, LikeCreateSerializer, \
-    CommentSerializer, CommentCreateSerializer, FollowSerializer, FollowCreateSerializer
+from .serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly, ObjectIsOwnerOrReadOnly
 
@@ -23,6 +21,18 @@ class UserDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrReadOnly,)
 
 
+class UserPostsAPI(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserPostsSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
+
+class UserFollowingsAPI(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserFollowingsSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
+
 # ------------------------PostAPIView--------------------------------------------
 class PostCreateAPI(generics.CreateAPIView):
     queryset = Post.objects.all()
@@ -39,6 +49,12 @@ class PostListAPI(generics.ListAPIView):
 class PostDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = (ObjectIsOwnerOrReadOnly,)
+
+
+class PostCommentsListAPI(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostCommentSerializer
     permission_classes = (ObjectIsOwnerOrReadOnly,)
 
 

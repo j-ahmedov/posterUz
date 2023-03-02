@@ -41,6 +41,31 @@ class UserInShortSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'avatar')
 
 
+class PostForDataSerializer(serializers.ModelSerializer):
+    comments_count = serializers.SerializerMethodField(read_only=True)
+
+    def get_comments_count(self, post):
+        return post.comments.count()
+
+    class Meta:
+        model = Post
+        fields = "__all__"
+
+    def to_representation(self, obj):
+        rep = super(PostForDataSerializer, self).to_representation(obj)
+        rep.pop('user', None)
+        return rep
+
+
+class UserPostsSerializer(serializers.ModelSerializer):
+
+    posts = PostForDataSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = ('posts',)
+
+
 # -----------------------Comment Serializers-----------------------------------------------------------
 
 
@@ -50,6 +75,15 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = "__all__"
+
+
+class CommentForDataSerializer(serializers.ModelSerializer):
+
+    user = UserInShortSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'comment', 'user', 'commented_at')
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
@@ -70,7 +104,6 @@ class PostSerializer(serializers.ModelSerializer):
     def get_comments_count(self, post):
         return post.comments.count()
 
-
     class Meta:
         model = Post
         fields = "__all__"
@@ -82,6 +115,15 @@ class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
+
+
+class PostCommentSerializer(serializers.ModelSerializer):
+
+    comments = CommentForDataSerializer(many=True)
+
+    class Meta:
+        model = Post
+        fields = ('comments',)
 
 
 # -----------------------Like Serializers-----------------------------------------------------------
@@ -142,4 +184,3 @@ class FollowCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
         fields = "__all__"
-

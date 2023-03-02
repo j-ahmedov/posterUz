@@ -14,7 +14,7 @@ class User(AbstractUser):
 
 
 class Post(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='user')
+    user = models.ForeignKey('User', related_name='posts', on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     content = models.TextField()
     post_image = models.ImageField(upload_to='post-images/%Y/%m/%d/')
@@ -43,7 +43,7 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    user = models.ForeignKey('User', on_delete=models.CASCADE)
+    user = models.ForeignKey('User', related_name='followings', on_delete=models.CASCADE)
     following_user = models.IntegerField()
 
     def __str__(self):
