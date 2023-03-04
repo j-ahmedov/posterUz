@@ -7,7 +7,7 @@ from .permissions import IsOwnerOrReadOnly, ObjectIsOwnerOrReadOnly
 #  --------------------UserAPIView----------------------------------------------
 class UserCreateAPI(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserCreateSerializer
 
 
 class UserListAPI(generics.ListAPIView):
@@ -24,12 +24,6 @@ class UserDetailAPI(generics.RetrieveUpdateDestroyAPIView):
 class UserPostsAPI(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserPostsSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
-
-
-class UserFollowingsAPI(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserFollowingsSerializer
     permission_classes = (IsOwnerOrReadOnly,)
 
 

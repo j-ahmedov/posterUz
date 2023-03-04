@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import Post, User, Like, Comment, Follow
+from django.core.serializers import serialize
+import json
 
 
 # -----------------------User Serializers-----------------------------------------------------------
@@ -19,18 +21,32 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'surname', 'username', 'avatar', 'followers_count', 'followings_count')
+        fields = ('id', 'first_name', 'last_name', 'username', 'avatar', 'followers_count', 'followings_count')
+
+
+class UserCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"
 
     def create(self, validated_data):
         user = User(
-            name=validated_data['name'],
-            surname=validated_data['surname'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
             username=validated_data['username'],
             avatar=validated_data['avatar'],
         )
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+    def to_representation(self, obj):
+        rep = super(UserCreateSerializer, self).to_representation(obj)
+        rep.pop('password', None)
+        rep.pop('groups', None)
+        rep.pop('user_permissions', None)
+        rep.pop('last_login', None)
+        return rep
 
 
 # Serializer to return User data in comments and posts

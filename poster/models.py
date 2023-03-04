@@ -3,8 +3,8 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    name = models.CharField(max_length=50)
-    surname = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=100)
     avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/')
@@ -43,8 +43,8 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    user = models.ForeignKey('User', related_name='followings', on_delete=models.CASCADE)
-    following_user = models.IntegerField()
+    following = models.ForeignKey('User', related_name='followings', on_delete=models.CASCADE)
+    follower = models.ForeignKey('User', related_name='followers', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Follow of {self.user.id}"
+        return f"Follow of {self.following.id} by {self.follower}"
