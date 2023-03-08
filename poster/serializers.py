@@ -1,8 +1,7 @@
+from django.core.exceptions import FieldError
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from .models import Post, User, Like, Comment, Follow
-from django.core.serializers import serialize
-import json
 
 
 # -----------------------User Serializers-----------------------------------------------------------
@@ -14,10 +13,18 @@ class UserSerializer(serializers.ModelSerializer):
     followings_count = serializers.SerializerMethodField(read_only=True)
 
     def get_followers_count(self, user):
-        return Follow.objects.filter(following_user=user.id).count()
+        try:
+            followers_count = Follow.objects.filter(following_user=user.id).count()
+        except FieldError:
+            return 0
+        return followers_count
 
     def get_followings_count(self, user):
-        return Follow.objects.filter(user=user).count()
+        try:
+            followings_count = Follow.objects.filter(user=user).count()
+        except FieldError:
+            return 0
+        return followings_count
 
     class Meta:
         model = User
@@ -83,7 +90,6 @@ class UserPostsSerializer(serializers.ModelSerializer):
 
 
 # -----------------------Comment Serializers-----------------------------------------------------------
-
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserInShortSerializer()
