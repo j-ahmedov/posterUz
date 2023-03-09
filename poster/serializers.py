@@ -122,9 +122,13 @@ class PostSerializer(serializers.ModelSerializer):
     user = UserInShortSerializer()
 
     comments_count = serializers.SerializerMethodField(read_only=True)
+    likes_count = serializers.SerializerMethodField(read_only=True)
 
     def get_comments_count(self, post):
         return post.comments.count()
+
+    def get_likes_count(selfs, post):
+        return post.likes.count()
 
     class Meta:
         model = Post
@@ -151,10 +155,8 @@ class PostCommentSerializer(serializers.ModelSerializer):
 # -----------------------Like Serializers-----------------------------------------------------------
 
 class LikeSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+    user = UserInShortSerializer()
+    post = PostForDataSerializer()
 
     class Meta:
         model = Like
@@ -164,9 +166,53 @@ class LikeSerializer(serializers.ModelSerializer):
 class LikeCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
+    def validate(self, data):
+        try:
+            like = Like.objects.filter(user=data['user'].id, post=data['post'])
+            if like.exists():
+                raise ValidationError('This post is already liked')
+        except Like.DoesNotExist:
+            pass
+
+        return data
+
     class Meta:
         model = Like
         fields = "__all__"
+
+
+class LikeForPostSerializer(serializers.ModelSerializer):
+    user = UserInShortSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'user')
+
+
+class LikeForUserSerializer(serializers.ModelSerializer):
+    post = PostForDataSerializer()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'post')
+
+
+class PostLikeSerializer(serializers.ModelSerializer):
+
+    likes = LikeForPostSerializer(many=True)
+
+    class Meta:
+        model = Post
+        fields = ('likes',)
+
+
+class UserLikeSerializer(serializers.ModelSerializer):
+
+    likes = LikeForUserSerializer(many=True)
+
+    class Meta:
+        model = Post
+        fields = ('likes',)
 
 
 # -----------------------Follow Serializers-----------------------------------------------------------
@@ -184,6 +230,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
 class FollowCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
 
     def validate(self, data):
         try:
