@@ -31,6 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'username', 'avatar', 'followers_count', 'followings_count')
 
 
+# User Create serializer
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -64,6 +65,7 @@ class UserInShortSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'avatar')
 
 
+# Serializer to return Post data for user and comment data in API
 class PostForDataSerializer(serializers.ModelSerializer):
     comments_count = serializers.SerializerMethodField(read_only=True)
 
@@ -80,6 +82,7 @@ class PostForDataSerializer(serializers.ModelSerializer):
         return rep
 
 
+# Serializer to represent posts of user
 class UserPostsSerializer(serializers.ModelSerializer):
 
     posts = PostForDataSerializer(many=True)
@@ -91,6 +94,7 @@ class UserPostsSerializer(serializers.ModelSerializer):
 
 # -----------------------Comment Serializers-----------------------------------------------------------
 
+# Comment serializer
 class CommentSerializer(serializers.ModelSerializer):
     user = UserInShortSerializer()
 
@@ -99,6 +103,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# Comment serializer to represent comment data in API
 class CommentForDataSerializer(serializers.ModelSerializer):
 
     user = UserInShortSerializer()
@@ -108,6 +113,7 @@ class CommentForDataSerializer(serializers.ModelSerializer):
         fields = ('id', 'comment', 'user', 'commented_at')
 
 
+# Comment serializer to create comment
 class CommentCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -118,6 +124,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
 # ------------------------Post Serializers------------------------------------------------------------
 
+# Post serializer to represent in API
 class PostSerializer(serializers.ModelSerializer):
     user = UserInShortSerializer()
 
@@ -135,6 +142,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# Post Create serializer to create post
 class PostCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -143,6 +151,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# Serializer to return comments of post
 class PostCommentSerializer(serializers.ModelSerializer):
 
     comments = CommentForDataSerializer(many=True)
@@ -154,6 +163,7 @@ class PostCommentSerializer(serializers.ModelSerializer):
 
 # -----------------------Like Serializers-----------------------------------------------------------
 
+# Like serializer to return like data in API
 class LikeSerializer(serializers.ModelSerializer):
     user = UserInShortSerializer()
     post = PostForDataSerializer()
@@ -163,6 +173,7 @@ class LikeSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# Serializer to create like
 class LikeCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -181,6 +192,7 @@ class LikeCreateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# Serializer to represent like data for post
 class LikeForPostSerializer(serializers.ModelSerializer):
     user = UserInShortSerializer()
 
@@ -189,6 +201,7 @@ class LikeForPostSerializer(serializers.ModelSerializer):
         fields = ('id', 'user')
 
 
+# Serializer to represent like data for user
 class LikeForUserSerializer(serializers.ModelSerializer):
     post = PostForDataSerializer()
 
@@ -197,6 +210,7 @@ class LikeForUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'post')
 
 
+# Serializer to represent likes of post
 class PostLikeSerializer(serializers.ModelSerializer):
 
     likes = LikeForPostSerializer(many=True)
@@ -206,6 +220,7 @@ class PostLikeSerializer(serializers.ModelSerializer):
         fields = ('likes',)
 
 
+# Serializer to represent likes of user
 class UserLikeSerializer(serializers.ModelSerializer):
 
     likes = LikeForUserSerializer(many=True)
@@ -217,6 +232,7 @@ class UserLikeSerializer(serializers.ModelSerializer):
 
 # -----------------------Follow Serializers-----------------------------------------------------------
 
+# Follow serializer to represent all data of follow object
 class FollowSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         read_only=True,
@@ -228,9 +244,9 @@ class FollowSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+# Serializer to create follow object
 class FollowCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
 
     def validate(self, data):
         try:
