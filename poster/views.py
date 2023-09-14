@@ -1,4 +1,9 @@
-from rest_framework import generics
+from django.http import JsonResponse
+from rest_framework import generics, status
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly, ObjectIsOwnerOrReadOnly
@@ -41,7 +46,7 @@ class PostCreateAPI(generics.CreateAPIView):
 
 
 class PostListAPI(generics.ListAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-published_at')
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
@@ -121,3 +126,20 @@ class FollowDetailAPI(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (ObjectIsOwnerOrReadOnly,)
 
 
+class ParseTokenView(APIView):
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            avatar = None
+            if user.avatar:
+                avatar = f'http://localhost:8000{user.avatar.url}'
+            user_data = {
+                'user_id': user.id,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'username': user.username,
+                'avatar': avatar
+            }
+            return Response(user_data, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)

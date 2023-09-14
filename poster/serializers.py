@@ -33,16 +33,27 @@ class UserSerializer(serializers.ModelSerializer):
 
 # User Create serializer
 class UserCreateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
         fields = "__all__"
 
+        extra_kwargs = {
+            'avatar': {'required': False}
+        }
+
     def create(self, validated_data):
+        avatar = ''
+        try:
+            avatar = validated_data['avatar']
+        except Exception as e:
+            print(e)
+
         user = User(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             username=validated_data['username'],
-            avatar=validated_data['avatar'],
+            avatar=avatar,
         )
         user.set_password(validated_data['password'])
         user.save()

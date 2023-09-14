@@ -10,6 +10,7 @@ urlpatterns = [
     path('api/v1/user/detail/<int:pk>', UserDetailAPI.as_view()),
     path('api/v1/user/post/list/<int:pk>', UserPostsAPI.as_view()),
     path('api/v1/user/like/list/<int:pk>', UserLikeListAPI.as_view()),
+    path('parse-token/', ParseTokenView.as_view(), name='parse-token'),
 
     # --------------urls for Post API-----------------------------------
     path('api/v1/post/list/', PostListAPI.as_view()),

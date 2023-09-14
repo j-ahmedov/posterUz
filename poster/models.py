@@ -7,7 +7,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=50)
     username = models.CharField(max_length=50, unique=True)
     password = models.CharField(max_length=100)
-    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/')
+    avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/', blank=True)
+
 
     def __str__(self):
         return self.username
