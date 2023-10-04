@@ -9,7 +9,6 @@ class User(AbstractUser):
     password = models.CharField(max_length=100)
     avatar = models.ImageField(upload_to='avatars/%Y/%m/%d/', blank=True)
 
-
     def __str__(self):
         return self.username
 

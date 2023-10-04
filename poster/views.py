@@ -48,7 +48,7 @@ class PostCreateAPI(generics.CreateAPIView):
 class PostListAPI(generics.ListAPIView):
     queryset = Post.objects.all().order_by('-published_at')
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
 
 
 class PostDetailAPI(generics.RetrieveUpdateDestroyAPIView):
